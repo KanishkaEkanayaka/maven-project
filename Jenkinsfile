@@ -12,26 +12,25 @@ pipeline {
                 
             }
         }
-        stage('test'){
-            parallel{
-                stage('testA'){
-                    agent { label 'server1' }
-                    steps{
+        stage('test') {
+            agent { label 'server1' }  // The agent is assigned here, outside of parallel
+            parallel(
+                testA: {
+                    steps {
                         echo "This is test A"
                         sh 'mvn test'
                     }
-                }
-                stage('testB'){
-                    agent { label 'server1' }
-                    steps{
+                },
+                testB: {
+                    steps {
                         echo "This is test B"
                         sh 'mvn test'
                     }
                 }
-            }
-            post{
-                success{
-                    dir('webapp/target/'){
+            )
+            post {
+                success {
+                    dir('webapp/target/') {
                         stash name: "maven-build", includes: "*.war"
                     }
                 }
