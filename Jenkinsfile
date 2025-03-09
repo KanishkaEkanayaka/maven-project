@@ -13,14 +13,14 @@ pipeline {
         }
         stage('test') {
             parallel {
-                testA: {
+                stage('testA'){
                     agent { label 'server1' }
                     steps {
                         echo "This is test A"
                         sh 'mvn test'
                     }
                 }
-                testB: {
+                stage('testB'){
                     agent { label 'server1' }
                     steps {
                         echo "This is test B"
