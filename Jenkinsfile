@@ -8,7 +8,7 @@ pipeline {
             }
             post{
                 success{
-                    archiveArtifacts artifacts: 'target/*.war'
+                    archiveArtifacts artifacts: '**/target/*.war'
                 }
             }
         }
