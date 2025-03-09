@@ -19,7 +19,7 @@ pipeline {
                         echo "This is test A"
                         sh 'mvn test'
                     }
-                },
+                }
                 testB: {
                     steps {
                         echo "This is test B"
