@@ -39,9 +39,29 @@ pipeline {
         stage('deploy_dev') {
             when { 
                 expression { params.select_environment == 'dev' }
+                beforeAgent true
             }
             agent { label 'server1' }
             steps {
+                dir('/var/www/html') {
+                    unstash "maven-build"
+                }
+                sh """
+                cd /var/www/html/
+                jar -xvf webapp.war
+                """
+            }
+        }
+        stage('deploy_prod'){
+            when { 
+                expression { params.select_environment == 'prod' }
+                beforeAgent true
+            }
+            agent { label 'server2' }
+            steps {
+                timeout(time: 15, unit: "MINUTES") {
+	                input message: 'Do you want to approve the deployment?', ok: 'Yes'
+	            }
                 dir('/var/www/html') {
                     unstash "maven-build"
                 }
