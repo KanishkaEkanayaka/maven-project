@@ -1,5 +1,4 @@
 pipeline {
-    agent { label 'server1' }
     
     parameters {
         choice choices: ['dev', 'prod'], name: 'select_environment'
@@ -7,6 +6,7 @@ pipeline {
     tools { maven 'mymaven' }
     stages{
         stage('build'){
+            agent { label 'server1' }
             steps{
                 sh 'mvn clean package -DskipTests=true'
                 
