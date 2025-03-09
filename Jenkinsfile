@@ -3,7 +3,7 @@ pipeline {
         choice choices: ['dev', 'prod'], name: 'select_environment'
     }
     tools { maven 'mymaven' }
-    agent none  // Use agent none here for global pipeline agent management
+    agent { label 'server1' }  // Use agent none here for global pipeline agent management
     stages {
         stage('build') {
             agent { label 'server1' }
