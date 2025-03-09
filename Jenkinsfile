@@ -17,10 +17,14 @@ pipeline {
         stage('test'){
             parallel{
                 stage('testA'){
-                    echo "This is test A"
+                    steps{
+                        echo "This is test A"
+                    }
                 }
                 stage('testB'){
-                    echo "This is test B"
+                    steps{
+                        echo "This is test B"
+                    }
                 }
             }
             post{
