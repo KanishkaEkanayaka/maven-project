@@ -29,6 +29,7 @@ pipeline {
                 }
             }
             post {
+                agent { label 'server1' }
                 success {
                     dir('webapp/target/') {
                         stash name: "maven-build", includes: "*.war"
