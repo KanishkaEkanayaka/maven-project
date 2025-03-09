@@ -1,20 +1,19 @@
 pipeline {
-    
     parameters {
         choice choices: ['dev', 'prod'], name: 'select_environment'
     }
     tools { maven 'mymaven' }
-    stages{
-        stage('build'){
+    agent none  // Use agent none here for global pipeline agent management
+    stages {
+        stage('build') {
             agent { label 'server1' }
-            steps{
+            steps {
                 sh 'mvn clean package -DskipTests=true'
-                
             }
         }
         stage('test') {
-            agent { label 'server1' }  // The agent is assigned here, outside of parallel
-            parallel(
+            agent { label 'server1' }  // The agent is assigned here
+            parallel {
                 testA: {
                     steps {
                         echo "This is test A"
@@ -27,7 +26,7 @@ pipeline {
                         sh 'mvn test'
                     }
                 }
-            )
+            }
             post {
                 success {
                     dir('webapp/target/') {
@@ -36,20 +35,19 @@ pipeline {
                 }
             }
         }
-        stage('deploy_dev'){
+        stage('deploy_dev') {
             when { 
-                expression {params.select_environment == 'dev'}
-                beforeAgent true
-                agent { label 'server1'}
-                steps{
-                    dir('/var/www/html'){
-                        unstash "maven-build"
-                    }
-                    sh """
-                    cd /var/www/html/
-                    jar -xvf webapp.war
-                    """
+                expression { params.select_environment == 'dev' }
+            }
+            agent { label 'server1' }
+            steps {
+                dir('/var/www/html') {
+                    unstash "maven-build"
                 }
+                sh """
+                cd /var/www/html/
+                jar -xvf webapp.war
+                """
             }
         }
     }
